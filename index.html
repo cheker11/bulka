@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Яка ти булочка сьогодні?</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        video {
+            transform: scaleX(-1);
+            /* Исправляем зеркальность */
+            border-radius: 10px;
+        }
+
+        #sticker {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(360deg);
+            }
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <video id="video" autoplay></video>
+    <img id="sticker" src="sticker.png" alt="Стикер кота">
+    <div class="button-container">
+        <button id="randomButton">Яка ти булочка сьогодні?</button>
+        <button id="spinAgainButton">Обрати ще раз</button>
+    </div>
+
+    <script>
+        const stickers = [
+            'sticker.png',
+            'sticker1.png',
+            'sticker2.png',
+            'sticker3.png',
+            'sticker4.png',
+            'sticker5.png',
+            'sticker6.png',
+            'sticker7.png',
+            'sticker8.png',
+            'sticker9.png',
+            'sticker10.png'
+        ];
+        const video = document.getElementById('video');
+        const sticker = document.getElementById('sticker');
+        const randomButton = document.getElementById('randomButton');
+        const spinAgainButton = document.getElementById('spinAgainButton');
+
+        // Доступ к камере
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Ошибка доступа к камере: ", err);
+            });
+
+        let spinInterval;
+
+        // Функция запуска кручения стикеров
+        function startSpinning() {
+            clearInterval(spinInterval);
+            spinInterval = setInterval(() => {
+                const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+                sticker.src = randomSticker;
+            }, 200); // Быстрое переключение каждые 200 мс
+        }
+
+        // Запускаем вращение стикеров при загрузке страницы
+        startSpinning();
+
+        // Останавливаем вращение и выбираем случайный стикер
+        randomButton.addEventListener('click', () => {
+            clearInterval(spinInterval);
+            const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+            sticker.src = randomSticker;
+        });
+
+        // Запускаем вращение заново по нажатию
+        spinAgainButton.addEventListener('click', () => {
+            startSpinning();
+        });
+    </script>
+</body>
+
+</html>
