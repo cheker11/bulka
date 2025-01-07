@@ -13,15 +13,12 @@
             height: 100vh;
             margin: 0;
             flex-direction: column;
-            position: relative;
         }
 
         video {
             transform: scaleX(-1);
+            /* Исправляем зеркальность */
             border-radius: 10px;
-            width: 100%;
-            max-width: 600px;
-            height: auto;
         }
 
         #sticker {
@@ -30,6 +27,16 @@
             left: 50%;
             transform: translateX(-50%);
             width: 100px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(360deg);
+            }
         }
 
         .button-container {
@@ -47,10 +54,9 @@
 </head>
 
 <body>
-    <video id="video" autoplay playsinline></video>
+    <video id="video" autoplay></video>
     <img id="sticker" src="sticker.png" alt="Стикер кота">
     <div class="button-container">
-        <button id="startButton">Включить камеру</button>
         <button id="randomButton">Яка ти булочка сьогодні?</button>
         <button id="spinAgainButton">Обрати ще раз</button>
     </div>
@@ -69,50 +75,45 @@
             'sticker9.png',
             'sticker10.png'
         ];
-
         const video = document.getElementById('video');
         const sticker = document.getElementById('sticker');
-        const startButton = document.getElementById('startButton');
         const randomButton = document.getElementById('randomButton');
         const spinAgainButton = document.getElementById('spinAgainButton');
 
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Доступ к камере
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
                 video.srcObject = stream;
-            } catch (err) {
+            })
+            .catch(err => {
                 console.error("Ошибка доступа к камере: ", err);
-                alert("Не удалось получить доступ к камере. Проверьте настройки браузера и разрешения.");
-            }
-        }
+            });
 
         let spinInterval;
 
+        // Функция запуска кручения стикеров
         function startSpinning() {
             clearInterval(spinInterval);
             spinInterval = setInterval(() => {
                 const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
                 sticker.src = randomSticker;
-            }, 200);
+            }, 200); // Быстрое переключение каждые 200 мс
         }
 
-        startButton.addEventListener('click', () => {
-            startCamera();
-            startButton.style.display = 'none'; // Скрыть кнопку после активации камеры
-        });
+        // Запускаем вращение стикеров при загрузке страницы
+        startSpinning();
 
+        // Останавливаем вращение и выбираем случайный стикер
         randomButton.addEventListener('click', () => {
             clearInterval(spinInterval);
             const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
             sticker.src = randomSticker;
         });
 
+        // Запускаем вращение заново по нажатию
         spinAgainButton.addEventListener('click', () => {
             startSpinning();
         });
-
-        // Запуск вращения стикеров при загрузке страницы
-        window.addEventListener('load', startSpinning);
     </script>
 </body>
 
