@@ -114,6 +114,20 @@
         spinAgainButton.addEventListener('click', () => {
             startSpinning();
         });
+        navigator.mediaDevices.getUserMedia({
+    video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: "user" // Использовать фронтальную камеру
+    }
+})
+.then(stream => {
+    video.srcObject = stream;
+})
+.catch(err => {
+    console.error("Ошибка доступа к камере: ", err);
+});
+
     </script>
 </body>
 
